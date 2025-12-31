@@ -34,13 +34,19 @@ class TaskSerializer(serializers.ModelSerializer):
                 "Due date must be in the future."
             )
         return value
+    
+    def validate_priority(self, value):
+        priorities = [choice[0] for choice in Task.PRIORITY_CHOICES]
+        if value not in priorities:
+            raise serializers.ValidationError(
+                f"Priority must be one of {priorities}."
+            )
+        return value
 
     class Meta:
         model = Task
         fields = "__all__"
         read_only_fields = (
             "owner",
-            "completed_at",
-            "created_at",
-            "updated_at",
+            "completed_at"
         )
