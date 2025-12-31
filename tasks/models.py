@@ -1,41 +1,43 @@
-from django.utils import timezone
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-# Create your models here.
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
 class Task(models.Model):
     PRIORITY_CHOICES = [
-        ('Low', 'Low'),
-        ('Medium', 'Medium'),
-        ('High', 'High'),
+        ("Low", "Low"),
+        ("Medium", "Medium"),
+        ("High", "High"),
     ]
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed')
+        ("PENDING", "Pending"),
+        ("COMPLETED", "Completed"),
     ]
-    title = models.CharField(max_length = 200)
+    RECURRENCE_CHOICES = [
+        ("DAILY", "Daily"),
+        ("WEEKLY", "Weekly"),
+    ]
+
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="PENDING")
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="Medium")
     due_date = models.DateField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Medium')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    updated_at = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User, related_name='tasks', on_delete=models.CASCADE)
     completed_at = models.DateTimeField(null=True, blank=True)
-    
-    def clean(self):
-        if self.due_date < timezone.now().date():
-            raise ValidationError("Due date must be in the future.")
-        
-    def mark_complete(self):
-        self.status = 'completed'
-        self.completed_at = timezone.now()
-        self.save()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    def mark_incomplete(self):
-        self.status = 'pending'
-        self.completed_at = None
-        self.save()
+    # Stretch goal fields
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+    recurrence = models.CharField(max_length=10, choices=RECURRENCE_CHOICES, null=True, blank=True)
+    shared_with = models.ManyToManyField(User, blank=True, related_name="shared_tasks")
+    reminder_sent = models.BooleanField(default=False)  # for notifications
 
-
+    def __str__(self):
+        return self.title

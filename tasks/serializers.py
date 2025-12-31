@@ -1,52 +1,30 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import Task, Category
 from datetime import date
-from .models import Task
+from django.contrib.auth.models import User
 
-
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'password']
-        
-        def create(self, validated_data):
-            user = User(
-                username = validated_data ['username'],
-                email = validated_data ['email'],
-            )
-            user.set_password(validated_data ['password'])
-            user.save()
-            return user
+        model = Category
+        fields = ["id", "name"]
 
-    
 class TaskSerializer(serializers.ModelSerializer):
-
-    priority = serializers.ChoiceField(
-        choices=Task.PRIORITY_CHOICES,
-        default="medium"
+    category = CategorySerializer(read_only=True)
+    shared_with = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all(), required=False
     )
-
-    def validate_due_date(self, value):
-        if value < date.today():
-            raise serializers.ValidationError(
-                "Due date must be in the future."
-            )
-        return value
-    
-    def validate_priority(self, value):
-        priorities = [choice[0] for choice in Task.PRIORITY_CHOICES]
-        if value not in priorities:
-            raise serializers.ValidationError(
-                f"Priority must be one of {priorities}."
-            )
-        return value
 
     class Meta:
         model = Task
-        fields = "__all__"
-        read_only_fields = (
-            "owner",
-            "completed_at"
-        )
+        fields = [
+            "id", "owner", "title", "description", "status", "priority",
+            "due_date", "completed_at", "created_at", "updated_at",
+            "category", "recurrence", "shared_with"
+        ]
+        read_only_fields = ["owner", "completed_at", "created_at", "updated_at"]
+
+    # ✅ Future due date validation
+    def validate_due_date(self, value):
+        if value < date.today():
+            raise serializers.ValidationError("Due date must be in the future.")
+        return value
