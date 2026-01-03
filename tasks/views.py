@@ -13,7 +13,7 @@ def home(request):
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = category.objects.all()
-    serilizer_class = CategorySerializer
+    serializer_class = CategorySerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
