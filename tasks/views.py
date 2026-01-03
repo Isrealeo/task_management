@@ -11,7 +11,7 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse("<h1>Welcome to Task Management!</h1>")
 
-class CategoryViewSet(viewsets.ModelsViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset = category.objects.all()
     serilizer_class = CategorySerializer
 
