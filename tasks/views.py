@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from django.db.models import Q
-from .models import Task
+from .models import Task, Category
 from .serializers import TaskSerializer, CategorySerializer
 from django.http import HttpResponse
 
