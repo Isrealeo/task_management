@@ -6,7 +6,12 @@ from django.contrib.auth.models import User
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name"]
+        fields = ['id', 'name', 'owner']
+        read_only_fields = ['id', 'owner']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return Category.objects.create(owner=user, **validated_data)
 
 class TaskSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
