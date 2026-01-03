@@ -5,11 +5,16 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from django.db.models import Q
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, CategorySerializer
 from django.http import HttpResponse
 
 def home(request):
     return HttpResponse("<h1>Welcome to Task Management!</h1>")
+
+class CategoryViewSet(viewsets.ModelsViewSet):
+    queryset = category.objects.all()
+    serilizer_class = CategorySerializer
+
 
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
