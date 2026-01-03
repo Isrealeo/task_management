@@ -42,6 +42,11 @@ This API allows users to register, authenticate, create and manage tasks with pr
 - SQLite (development)
 
 ---
+## Requirements fo deployment on pythonanywhere
+
+- Python 3.13
+- Django 5.2.9
+- Django REST Framework 3.16.1
 
 ## 📌 API Endpoints (Summary)
 
