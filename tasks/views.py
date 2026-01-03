@@ -5,6 +5,10 @@ from rest_framework.decorators import action
 from django.db.models import Q
 from .models import Task
 from .serializers import TaskSerializer
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("<h1>Welcome to Task Management!</h1>")
 
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
