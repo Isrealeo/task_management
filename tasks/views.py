@@ -12,7 +12,7 @@ def home(request):
     return HttpResponse("<h1>Welcome to Task Management!</h1>")
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = category.objects.all()
+    queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
